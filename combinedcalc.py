@@ -11,17 +11,17 @@ def parseIPv4Input(rawinput):
 	IPv4regex = re.compile(r'[0-9]+(?:\.[0-9]+){3}')
 	IPv4output = re.findall(IPv4regex, rawinput )
 
-	IPv4List = list()
+	IPv4Listing = set()
 
 	for rawIP in IPv4output:
 		try:
 			tempAddress=ipaddress.IPv4Address(rawIP)
-			IPv4List.append(tempAddress)
+			IPv4Listing.add(tempAddress)
 		except ValueError:
 			continue
-	list(set(IPv4List))
-	IPv4List.sort(key=int)
-	return IPv4List
+	IPv4Listing=list(IPv4Listing)
+	IPv4Listing.sort(key=int)
+	return IPv4Listing
 
 
 def parseIPv6Input(rawinput):
@@ -29,17 +29,17 @@ def parseIPv6Input(rawinput):
 	ipv6regex=re.compile('(?<![:.\w])(?:(?:[A-F0-9]{1,4}:){7}[A-F0-9]{1,4}|(?=(?:[A-F0-9]{0,4}:){0,7}[A-F0-9]{0,4}(?![:.\w]))(?:(?:[0-9A-F]{1,4}:){1,7}|:)(?:(?::[0-9A-F]{1,4}){1,7}|:)|(?:[A-F0-9]{1,4}:){7}:|:(?::[A-F0-9]{1,4}){7})(?![:.\w])',re.IGNORECASE)
 	ipv6output=re.findall(ipv6regex, rawinput)
 
-	IPv6List = list()
+	IPv6Listing = set()
 
 	for rawIP in ipv6output:
 		try:
 			tempAddress=ipaddress.IPv6Address(rawIP)
-			IPv6List.append(tempAddress)
+			IPv6Listing.add(tempAddress)
 		except ValueError:
 			continue
-	list(set(IPv6List))
-	IPv6List.sort(key=int)
-	return IPv6List
+	IPv6Listing=list(IPv6Listing)
+	IPv6Listing.sort(key=int)
+	return IPv6Listing
 
 def CIDRcalc(xorranges,version):
 
@@ -144,7 +144,7 @@ def outputIPv6(IPv6Block):
 	print("IPv6 Range is " + str(IPv6Block))
 	print("Size of Range is " + str(IPv6Block.num_addresses))
 
-def maximumsizeoutput(IPv4List,maximum):
+def maxsizecalcIPv4(IPv4List,maximum):
 	baseIP = IPv4List[0]
 	resultList = list()
 	for prevIP, IP in zip(IPv4List,IPv4List[1:]):
@@ -152,11 +152,23 @@ def maximumsizeoutput(IPv4List,maximum):
 		if CIDRcalc(binaryxor,4) < maximum:
 			resultList.append(calcIPv4Range(baseIP,prevIP))
 			baseIP = IP
-	resultList.append(calcIPv4Range(baseIP,IP))
+	if(baseIP!=IPv4List[-1] or len(IPv4List)==1):
+		resultList.append(calcIPv4Range(baseIP,IPv4List[-1]))
 
 	return resultList
 					
+def maxsizecalcIPv6(IPv6List,maximum):
+	baseIP = IPv6List[0]
+	resultList = list()
+	for prevIP, IP in zip(IPv6List,IPv6List[1:]):
+		binaryxor = int(baseIP) ^ int(IP)
+		if CIDRcalc(binaryxor,6) < maximum:
+			resultList.append(calcIPv4Range(baseIP,prevIP))
+			baseIP = IP
+	if(baseIP!=IPv6List[-1] or len(IPv6List)==1):
+		resultList.append(calcIPv6Range(baseIP,IPv6List[-1]))
 
+	return resultList
 rawinput = input("Enter raw IP information: ")
 
 IPv4List = parseIPv4Input(rawinput)
@@ -169,13 +181,13 @@ if IPv4List:
 	end=IPv4List[-1]
 	IPv4Block=calcIPv4Range(start,end)
 	outputIPv4(IPv4Block)
-	#print(maximumsizeoutput(IPv4List,16))
+	#print(maxsizecalcIPv4(IPv4List,16))
 if IPv6List:
 	start=IPv6List[0]
 	end=IPv6List[-1]
 	IPv6Block=calcIPv6Range(start,end)
 	outputIPv6(IPv6Block)
-
+	#print(maxsizecalcIPv6(IPv6List,64))
 if not(IPv6List or IPv4List):
 	print("Sorry, no valid IP address input")
 	
