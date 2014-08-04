@@ -55,7 +55,7 @@ def CIDRcalc(xorranges,version):
 	if version==6:
 		#if identical /128
 		if xorranges==0:
-			rCIDR = 128
+			CIDR = 128
 			return CIDR
 
 		CIDR = (128-(bin(binaryxor).count('0') + bin(binaryxor).count('1')-1))
