@@ -152,8 +152,7 @@ def maxsizecalcIPv4(IPv4List,maximum):
 		if CIDRcalc(binaryxor,4) < maximum:
 			resultList.append(calcIPv4Range(baseIP,prevIP))
 			baseIP = IP
-	if(baseIP!=IPv4List[-1] or len(IPv4List)==1):
-		resultList.append(calcIPv4Range(baseIP,IPv4List[-1]))
+	resultList.append(calcIPv4Range(baseIP,IPv4List[-1]))
 
 	return resultList
 					
@@ -163,31 +162,40 @@ def maxsizecalcIPv6(IPv6List,maximum):
 	for prevIP, IP in zip(IPv6List,IPv6List[1:]):
 		binaryxor = int(baseIP) ^ int(IP)
 		if CIDRcalc(binaryxor,6) < maximum:
-			resultList.append(calcIPv4Range(baseIP,prevIP))
+			resultList.append(calcIPv6Range(baseIP,prevIP))
 			baseIP = IP
-	if(baseIP!=IPv6List[-1] or len(IPv6List)==1):
-		resultList.append(calcIPv6Range(baseIP,IPv6List[-1]))
+	resultList.append(calcIPv6Range(baseIP,IPv6List[-1]))
 
 	return resultList
+
+
+
 rawinput = input("Enter raw IP information: ")
+
 
 IPv4List = parseIPv4Input(rawinput)
 IPv6List = parseIPv6Input(rawinput)
-
-
+if IPv4List:
+	maxIPv4size = input("Would you like to enable IPv4 subranges? Press enter if no, enter a number from 8 to 32 otherwise: ")
+if IPv6List:
+	maxIPv4size = input("Would you like to enable IPv6 subranges? Press enter from no, enter a number 16 to 128 otherwise: ")
 
 if IPv4List:
 	start=IPv4List[0]
 	end=IPv4List[-1]
 	IPv4Block=calcIPv4Range(start,end)
 	outputIPv4(IPv4Block)
-	#print(maxsizecalcIPv4(IPv4List,16))
+	if(maxIPv4size):	
+		maxIPv4size = int(maxIPv4size)
+		print(maxsizecalcIPv4(IPv4List,maxIPv4size))
 if IPv6List:
 	start=IPv6List[0]
 	end=IPv6List[-1]
 	IPv6Block=calcIPv6Range(start,end)
 	outputIPv6(IPv6Block)
-	#print(maxsizecalcIPv6(IPv6List,64))
+	if(maxIPv6size):
+		maxIPv6size=int(maxIPv6size)
+		print(maxsizecalcIPv6(IPv6List,maxIPv6size))
 if not(IPv6List or IPv4List):
 	print("Sorry, no valid IP address input")
 	
