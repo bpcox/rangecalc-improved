@@ -19,6 +19,7 @@ def parseIPv4Input(rawinput):
 			IPv4List.append(tempAddress)
 		except ValueError:
 			continue
+	list(set(IPv4List))
 	IPv4List.sort(key=int)
 	return IPv4List
 
@@ -36,7 +37,7 @@ def parseIPv6Input(rawinput):
 			IPv6List.append(tempAddress)
 		except ValueError:
 			continue
-
+	list(set(IPv6List))
 	IPv6List.sort(key=int)
 	return IPv6List
 
@@ -143,7 +144,18 @@ def outputIPv6(IPv6Block):
 	print("IPv6 Range is " + str(IPv6Block))
 	print("Size of Range is " + str(IPv6Block.num_addresses))
 
+def maximumsizeoutput(IPv4List,maximum):
+	baseIP = IPv4List[0]
+	resultList = list()
+	for prevIP, IP in zip(IPv4List,IPv4List[1:]):
+		binaryxor = int(baseIP) ^ int(IP)
+		if CIDRcalc(binaryxor,4) < maximum:
+			resultList.append(calcIPv4Range(baseIP,prevIP))
+			baseIP = IP
+	resultList.append(calcIPv4Range(baseIP,IP))
 
+	return resultList
+					
 
 rawinput = input("Enter raw IP information: ")
 
@@ -157,7 +169,7 @@ if IPv4List:
 	end=IPv4List[-1]
 	IPv4Block=calcIPv4Range(start,end)
 	outputIPv4(IPv4Block)
-
+	#print(maximumsizeoutput(IPv4List,16))
 if IPv6List:
 	start=IPv6List[0]
 	end=IPv6List[-1]
