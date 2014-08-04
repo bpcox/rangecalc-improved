@@ -40,6 +40,37 @@ def parseIPv6Input(rawinput):
 	IPv6List.sort(key=int)
 	return IPv6List
 
+def CIDRcalc(xorranges,version):
+
+	if version==4:
+		#if identical is a /32
+		if xorranges==0:
+			CIDR = 32
+			return CIDR
+		#otherwise, the value is 32 -(number of 0s + number of 1s - 1)
+		#this is because python cuts off the leading 0s, and the -1 compensates for
+		#the 0, in the 0b which prefixes the binary text
+		CIDR = (32-(bin(xorranges).count('0') + bin(xorranges).count('1')-1))
+		return CIDR
+	if version==6:
+		#if identical /128
+		if xorranges==0:
+			rCIDR = 128
+			return CIDR
+
+		CIDR = (128-(bin(binaryxor).count('0') + bin(binaryxor).count('1')-1))
+		return CIDR
+
+def generateBitmask(CIDR,version):
+	if version==4:
+		rangemaskstr = '1'*CIDR + '0'*(32-CIDR)
+		rangemask = int(rangemaskstr,2)
+		return rangemask
+
+	if version==6:
+		rangemaskstr = '1'*CIDR + '0'*(128-CIDR)
+		rangemask = int(rangemaskstr,2)
+		return rangemask
 
 def calcIPv4Range(start,end):
 	binarystart = int(start)
@@ -48,27 +79,18 @@ def calcIPv4Range(start,end):
         #run exclusive or on them to check for similarities
 	binaryxor = binarystart ^ binaryend
 
-        #if they are identical, it's the same IP, hence the IP is a /32
-	if binaryxor==0:
-		rangesize=32
-        #otherwise, the value is 32 -(number of 0s + number of 1s - 1)
-        #this is because python cuts off the leading 0s, and the -1 compensates for
-        #the 0, in the 0b which prefixes the binary text
-	else:
-		rangesize = (32-(bin(binaryxor).count('0') + bin(binaryxor).count('1')-1))
+	CIDRrangesize = CIDRcalc(binaryxor,4)
 
-        #debugging message, printing out size of range
-        #print(rangesize)
 
         #now, create a string which can be used to bitmask off the rightmost digits,
         #outside of the common range size
-	rangemaskstr = '1'*rangesize + '0'*(32-rangesize)
+
 
         #debug message meant to check bitmask is correct
         #print(rangemaskstr)
 
         #convert from string (easier to generate) to binary number
-	rangemask = int(rangemaskstr,2)
+	rangemask = generateBitmask(CIDRrangesize,4)
         #implement masking
 	finalrangeint = binarystart & rangemask
 
@@ -77,7 +99,7 @@ def calcIPv4Range(start,end):
 	finalrangeobject = ipaddress.IPv4Address(finalrangeint)
 	#print(finalrangeobject)
 
-	IPv4result= ipaddress.IPv4Network("/".join([str(finalrangeobject),str(rangesize)]))
+	IPv4result= ipaddress.IPv4Network("/".join([str(finalrangeobject),str(CIDRrangesize)]))
 	return IPv4result
 
 def calcIPv6Range(start,end):
@@ -89,26 +111,19 @@ def calcIPv6Range(start,end):
 	binaryxor = binarystart ^ binaryend
 
         #if they are identical, the IP is the same, hence the ipv6 IP is a /128
-	if binaryxor==0:
-		rangesize=128
-        #otherwise the value is 128-(number of 0s+number of 1s -1)
-        #python cuts off the leading 0s, meaning the number of leading common
-        #characters is 128-visible characters. The -1 compensates for the 0 in
-        #0b, which leads binary representations
-	else:
-		rangesize = (128-(bin(binaryxor).count('0') + bin(binaryxor).count('1')-1))
+	CIDRrangesize = CIDRcalc(binaryxor,6)
 
         #debug message, prints out size of range
         #print(rangesize)
 
         #create a string which can be converted into a bitmask for the rightmost digits    
-	rangemaskstr = '1'*rangesize + '0'*(128-rangesize)
+
 
         #debug message which prints rangemask
         #print(rangemaskstr)
 
         #converts from binary string to int for masking
-	rangemask = int(rangemaskstr,2)
+	rangemask = generateBitmask(CIDRrangesize,6)
 
         #bitmask off the right digits, outside of the common range
 	finalrangeint = binarystart & rangemask
@@ -117,7 +132,7 @@ def calcIPv6Range(start,end):
 	#print(finalrangeobject)
 
         #make IPv6Network object which represents the result
-	IPv6result =ipaddress.IPv6Network("/".join([str(finalrangeobject), str(rangesize)]))
+	IPv6result =ipaddress.IPv6Network("/".join([str(finalrangeobject), str(CIDRrangesize)]))
 	return IPv6result
 
 def outputIPv4(IPv4Block):
@@ -142,7 +157,7 @@ if IPv4List:
 	end=IPv4List[-1]
 	IPv4Block=calcIPv4Range(start,end)
 	outputIPv4(IPv4Block)
-      
+
 if IPv6List:
 	start=IPv6List[0]
 	end=IPv6List[-1]
