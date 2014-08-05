@@ -158,6 +158,27 @@ def outputIPv6(IPv6Block):
 	print("IPv6 Range is " + str(IPv6Block))
 	print("Size of Range is " + str(IPv6Block.num_addresses))
 
+def outputIPmulti(subranges,version):
+	if version ==4:	
+		IPlist = list()
+		for IPrange in subranges:
+			if IPrange.prefixlen<32:
+				print(str(IPrange))
+			else:
+				IPlist.append(IPrange[0])
+		for IPaddress in IPlist:
+			print(str(IPaddress))
+
+	if version==6:
+		IPlist = list()
+		for IPrange in subranges:
+			if IPrange.prefixlen<128:
+				print(str(IPrange))
+			else:
+				IPlist.append(IPrange[0])
+
+		for IPaddress in IPlist:
+			print(str(IPaddress))
 def maxsizecalcIPv4(IPv4List,maximum):
 	baseIP = IPv4List[0]
 	resultList = list()
@@ -200,17 +221,15 @@ if IPv4List:
 	end=IPv4List[-1]
 	IPv4Block=calcIPv4Range(start,end)
 	outputIPv4(IPv4Block)
-#	if(maxIPv4size):	
-#		maxIPv4size = int(maxIPv4size)
-	print(maxsizecalcIPv4(IPv4List,12))
+	outputIPmulti(maxsizecalcIPv4(IPv4List,12),4)
+
 if IPv6List:
 	start=IPv6List[0]
 	end=IPv6List[-1]
 	IPv6Block=calcIPv6Range(start,end)
 	outputIPv6(IPv6Block)
-#	if(maxIPv6size):
-#		maxIPv6size=int(maxIPv6size)
-	print(maxsizecalcIPv6(IPv6List,48))
+	outputIPmulti(maxsizecalcIPv6(IPv6List,48),6)
+
 if not(IPv6List or IPv4List):
 	print("Sorry, no valid IP address input")
 	
