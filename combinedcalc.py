@@ -19,6 +19,20 @@ def parseIPv4Input(rawinput):
 			IPv4Listing.add(tempAddress)
 		except ValueError:
 			continue
+
+	IPv4rangeregex = re.compile(r'[0-9]+(?:\.[0-9]+){3}/[0-9]{1,2}')
+	IPv4rangeoutput = re.findall(IPv4rangeregex, rawinput)
+
+	for rawIPnetwork in IPv4rangeoutput:
+		try:
+			tempRange=ipaddress.IPv4Network(rawIPnetwork)
+			print(tempRange[0])
+			print(tempRange[-1])
+			IPv4Listing.add(tempRange[0])
+			IPv4Listing.add(tempRange[-1])
+		except ValueError:
+			continue
+
 	IPv4Listing=list(IPv4Listing)
 	IPv4Listing.sort(key=int)
 	return IPv4Listing
@@ -175,27 +189,28 @@ rawinput = input("Enter raw IP information: ")
 
 IPv4List = parseIPv4Input(rawinput)
 IPv6List = parseIPv6Input(rawinput)
-if IPv4List:
-	maxIPv4size = input("Would you like to enable IPv4 subranges? Press enter if no, enter a number from 8 to 32 otherwise: ")
-if IPv6List:
-	maxIPv4size = input("Would you like to enable IPv6 subranges? Press enter from no, enter a number 16 to 128 otherwise: ")
+
+#if IPv4List:
+#	maxIPv4size = input("Would you like to enable IPv4 subranges? Press enter if no, enter a number from 8 to 32 otherwise: ")
+#if IPv6List:
+#	maxIPv4size = input("Would you like to enable IPv6 subranges? Press enter from no, enter a number 16 to 128 otherwise: ")
 
 if IPv4List:
 	start=IPv4List[0]
 	end=IPv4List[-1]
 	IPv4Block=calcIPv4Range(start,end)
 	outputIPv4(IPv4Block)
-	if(maxIPv4size):	
-		maxIPv4size = int(maxIPv4size)
-		print(maxsizecalcIPv4(IPv4List,maxIPv4size))
+#	if(maxIPv4size):	
+#		maxIPv4size = int(maxIPv4size)
+	print(maxsizecalcIPv4(IPv4List,12))
 if IPv6List:
 	start=IPv6List[0]
 	end=IPv6List[-1]
 	IPv6Block=calcIPv6Range(start,end)
 	outputIPv6(IPv6Block)
-	if(maxIPv6size):
-		maxIPv6size=int(maxIPv6size)
-		print(maxsizecalcIPv6(IPv6List,maxIPv6size))
+#	if(maxIPv6size):
+#		maxIPv6size=int(maxIPv6size)
+	print(maxsizecalcIPv6(IPv6List,48))
 if not(IPv6List or IPv4List):
 	print("Sorry, no valid IP address input")
 	
