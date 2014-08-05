@@ -26,8 +26,6 @@ def parseIPv4Input(rawinput):
 	for rawIPnetwork in IPv4rangeoutput:
 		try:
 			tempRange=ipaddress.IPv4Network(rawIPnetwork)
-			print(tempRange[0])
-			print(tempRange[-1])
 			IPv4Listing.add(tempRange[0])
 			IPv4Listing.add(tempRange[-1])
 		except ValueError:
