@@ -1,0 +1,14 @@
+<html>
+<head>
+</head>
+<body>
+<form action="" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Submit" />
+    <br>
+    {% for IP in object_list %}
+    <li class="output">{{ output }}</li>
+    {% endfor %}
+</form>
+</body>
