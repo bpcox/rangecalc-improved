@@ -7,8 +7,19 @@
     {{ form }}
     <input type="submit" value="Submit" />
     <br>
-    {% for IP in object_list %}
-    <li class="output">{{ output }}</li>
-    {% endfor %}
+    {% if IPv4simple.error %}
+    <b> {{IPv4simple.error }} </b>
+    {% endif %}
+    {% if IPv4simple.IPv4 %}
+    <li class="output">Base IPv4: {{ IPv4simple.IPv4 }}</li>
+    <!--{% for obj in IPv4simple.IPv4multi %}
+    <li>IPv4 Subrange: {{ IPv4simple.IPv4multi }}
+    {% endfor %} --!>
+    <li>IPv4 Subranges: {{ IPv4simple.IPv4multi}}</li>
+    {% endif %}
+    {% if IPv4simple.IPv6 %}
+    <li> Base IPv6: {{IPv4simple.IPv6}}</li>
+    <li> IPv6 Subranges: {{ IPv4simple.IPv6multi }}</li>
+    {% endif %}
 </form>
 </body>

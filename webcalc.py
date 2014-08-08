@@ -76,7 +76,7 @@ def CIDRcalc(xorranges,version):
 			CIDR = 128
 			return CIDR
 
-		CIDR = (128-(bin(binaryxor).count('0') + bin(binaryxor).count('1')-1))
+		CIDR = (128-(bin(xorranges).count('0') + bin(xorranges).count('1')-1))
 		return CIDR
 
 #given CIDR size, and IPv4vs IPv6 returns integer bitmask
