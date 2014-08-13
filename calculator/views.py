@@ -24,16 +24,16 @@ def index(request):
             if not parsedIPv4Input:
                 mutatedRanges = ''
             else:
-                for IP in parsedIPv4Input:
-                    mutatedRanges = mutatedRanges + str(IP) + '\n'
+                for ip in parsedIPv4Input:
+                    mutatedRanges = mutatedRanges + str(ip) + '\n'
                # mutatedRanges = str(parsedIPv4Input)
             if ( parsedIPv4Input and parsedIPv6Input):
                 mutatedRanges = mutatedRanges + '\n'
             if not parsedIPv6Input:
                 mutatedRanges = mutatedRanges + ''
             else:
-                for IP in parsedIPv6Input:
-                    mutatedRanges = mutatedRanges + str(IP) + '\n'
+                for ip in parsedIPv6Input:
+                    mutatedRanges = mutatedRanges + str(ip) + '\n'
             mutatedRanges = mutatedRanges[:-1]
             if (not parsedIPv6Input and not parsedIPv4Input):
                 mutatedRanges = ''
@@ -52,15 +52,3 @@ def index(request):
                 output['error'] = 'No valid input recieved! Input IPv4 Addresses & Ranges, and IPv6 Addresses only!'
     finaloutput = {'form':form, 'IPv4simple':output}
     return render(request, "index.html", finaloutput)
-
-def IPv4output(request):
-    form = RangeForm()
-    if request.method == 'POST':
-        form = RangeForm(request.POST)
-        if form.is_valid():
-            ranges = form.cleaned_data['ranges']
-            parsedInput = webcalc.parseIPv4Input(ranges)
-            IPv4Range=webcalc.calcIPv4Range(parsedInput[0],parsedInput[-1])
-            output = {'output':str(IPv4Range)}
-    return render(request, "index.html", {"output": "output"})
-	
