@@ -17,15 +17,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-with open('/webserv/secret_key') as f:
-	SECRET_KEY = f.read().strip()
+SECRET_KEY = 'oksb0_#kj4frab1knhe9@7otu%p3(u1rk&0%ld5%l7msdv9lqk'
+
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-#DEBUG = True
+DEBUG = True
+#ALLOWED_HOSTS = ['*']
+TEMPLATE_DEBUG = True
 
-TEMPLATE_DEBUG = False
-
-#TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = []
 
 

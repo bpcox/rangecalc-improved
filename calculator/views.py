@@ -2,11 +2,9 @@ from django.shortcuts import render
 import django.template
 from calculator.forms import RangeForm
 
-import .webcalc
+from .import webcalc
 
-sys.path.append(os.path.abspath(scriptpath))
 
-import webcalc
 
 # Create your views here.
 
