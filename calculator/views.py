@@ -2,9 +2,7 @@ from django.shortcuts import render
 import django.template
 from calculator.forms import RangeForm
 
-import sys
-import os
-scriptpath = '../webcalc.py'
+import .webcalc
 
 sys.path.append(os.path.abspath(scriptpath))
 
