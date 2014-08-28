@@ -4,6 +4,12 @@
 <body>
 <form action="" method="post">
     {% csrf_token %}
+
+
+    Simply input any combination of IPv4 ranges & addresses, and IPv6 addresses. The applicable ranges will be displayed. In the event of multiple separate ranges, subranges may be output.
+<br>
+<br>
+
     {{ form }}
     <input type="submit" value="Submit" />
     <br>
